@@ -98,6 +98,8 @@
       background-color: #222;
     }
   </style>
+    <audio id="checkSound" src="sounds/check.mp3"></audio>
+  <audio id="uncheckSound" src="sounds/uncheck.mp3"></audio>
 </head>
 <body>
   <h1>📆 Boumper X Trap Week</h1>
@@ -114,6 +116,7 @@
       { day: 'Domingo', task: 'Reflexión post-evento (reel o post)' }
     ];
 
+    
     const calendar = document.getElementById('calendar');
 
     tasks.forEach((item, index) => {
@@ -140,6 +143,38 @@
       localStorage.removeItem(`task_${index}`);
       element.classList.remove('completed');
     }
+
+    document.querySelectorAll('.calendar-day').forEach(day => {
+  const checkSound = document.getElementById('checkSound');
+  const uncheckSound = document.getElementById('uncheckSound');
+
+  const removeBtn = document.createElement('button');
+  removeBtn.innerText = '✕';
+  removeBtn.classList.add('remove-button');
+  removeBtn.style.display = 'none';
+  day.appendChild(removeBtn);
+
+  day.addEventListener('click', () => {
+    if (!day.classList.contains('checked')) {
+      day.classList.add('checked');
+      day.style.backgroundColor = '#4CAF50';
+      day.style.boxShadow = '0 0 15px #4CAF50';
+      removeBtn.style.display = 'inline';
+      checkSound.currentTime = 0;
+      checkSound.play();
+    }
+  });
+
+  removeBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    day.classList.remove('checked');
+    day.style.backgroundColor = '#111';
+    day.style.boxShadow = '0 0 10px rgba(255, 255, 255, 0.1)';
+    removeBtn.style.display = 'none';
+    uncheckSound.currentTime = 0;
+    uncheckSound.play();
+  });
+});
   </script>
 </body>
 </html>
