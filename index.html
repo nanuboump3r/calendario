@@ -1,107 +1,145 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Calendario Boumper X - Trap Week</title>
   <style>
+    :root {
+      --main-color: #ff0044;
+      --bg-dark: #0c0c0c;
+      --card-bg: #1a1a1a;
+      --text-light: #f1f1f1;
+      --text-muted: #999;
+      --accent-success: #00ff88;
+    }
+
     body {
-      background-color: #0d0d0d;
-      color: white;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-light);
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 2rem;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 40px;
     }
+
     h1 {
-      margin-bottom: 20px;
+      color: var(--main-color);
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      letter-spacing: 1px;
     }
+
     .calendar {
       display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 15px;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 1000px;
     }
-    .calendar-day {
-      width: 100px;
-      height: 80px;
-      background-color: #111;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
-      cursor: pointer;
+
+    .day {
+      background: var(--card-bg);
+      border: 1px solid #2a2a2a;
+      border-left: 5px solid var(--main-color);
+      padding: 1rem;
+      border-radius: 16px;
+      box-shadow: 0 0 15px rgba(255, 0, 68, 0.2);
+      transition: all 0.3s ease;
       position: relative;
-      transition: all 0.2s ease-in-out;
     }
-    .calendar-day.checked {
-      background-color: #4CAF50;
-      box-shadow: 0 0 15px #4CAF50;
+
+    .day:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 25px rgba(255, 0, 68, 0.4);
     }
-    .remove-button {
-      position: absolute;
-      top: 5px;
-      right: 8px;
-      background: transparent;
+
+    .day h2 {
+      font-size: 1.2rem;
+      margin: 0 0 0.5rem;
+    }
+
+    .day p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin: 0.25rem 0;
+    }
+
+    .completed {
+      border-left-color: var(--accent-success);
+      background: #112211 !important;
+      box-shadow: 0 0 25px rgba(0, 255, 136, 0.4) !important;
+    }
+
+    button {
+      margin-top: 0.5rem;
+      background-color: var(--main-color);
       color: white;
+      padding: 0.4rem 0.8rem;
       border: none;
-      font-size: 14px;
+      border-radius: 8px;
       cursor: pointer;
-      display: none;
+      font-size: 0.85rem;
+      transition: background 0.3s ease;
+      margin-right: 0.5rem;
     }
-    .calendar-day.checked .remove-button {
-      display: block;
+
+    button:hover {
+      background-color: #cc0033;
+    }
+
+    .remove-btn {
+      background-color: #444;
+    }
+
+    .remove-btn:hover {
+      background-color: #222;
     }
   </style>
 </head>
 <body>
-  <h1>Calendario Boumper X - Semana Trap</h1>
-  <div class="calendar">
-    <div class="calendar-day">Lunes</div>
-    <div class="calendar-day">Martes</div>
-    <div class="calendar-day">Miércoles</div>
-    <div class="calendar-day">Jueves</div>
-    <div class="calendar-day">Viernes</div>
-    <div class="calendar-day">Sábado</div>
-    <div class="calendar-day">Domingo</div>
-  </div>
-
-  <audio id="checkSound" src="sounds/check.mp3"></audio>
-  <audio id="uncheckSound" src="sounds/uncheck.mp3"></audio>
+  <h1>📆 Boumper X Trap Week</h1>
+  <div class="calendar" id="calendar"></div>
 
   <script>
-    document.querySelectorAll('.calendar-day').forEach(day => {
-      const checkSound = document.getElementById('checkSound');
-      const uncheckSound = document.getElementById('uncheckSound');
+    const tasks = [
+      { day: 'Lunes', task: 'Loop de trap – mini video en DAW' },
+      { day: 'Martes', task: 'Visual glitch con beat crudo' },
+      { day: 'Miércoles', task: 'Top plugins de trap (carrusel o reel)' },
+      { day: 'Jueves', task: 'Mini DJ set de trap oscuro' },
+      { day: 'Viernes', task: 'Teaser del evento + nuevo beat' },
+      { day: 'Sábado', task: 'Contenido del show en vivo' },
+      { day: 'Domingo', task: 'Reflexión post-evento (reel o post)' }
+    ];
 
-      const removeBtn = document.createElement('button');
-      removeBtn.innerText = '✕';
-      removeBtn.classList.add('remove-button');
-      day.appendChild(removeBtn);
+    const calendar = document.getElementById('calendar');
 
-      day.addEventListener('click', () => {
-        if (!day.classList.contains('checked')) {
-          day.classList.add('checked');
-          day.style.backgroundColor = '#4CAF50';
-          day.style.boxShadow = '0 0 15px #4CAF50';
-          removeBtn.style.display = 'inline';
-          checkSound.currentTime = 0;
-          checkSound.play();
-        }
-      });
+    tasks.forEach((item, index) => {
+      const stored = localStorage.getItem(`task_${index}`);
+      const div = document.createElement('div');
+      div.className = 'day' + (stored === 'done' ? ' completed' : '');
 
-      removeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        day.classList.remove('checked');
-        day.style.backgroundColor = '#111';
-        day.style.boxShadow = '0 0 10px rgba(255, 255, 255, 0.1)';
-        removeBtn.style.display = 'none';
-        uncheckSound.currentTime = 0;
-        uncheckSound.play();
-      });
+      div.innerHTML = `
+        <h2>${item.day}</h2>
+        <p>${item.task}</p>
+        <button onclick="completeTask(${index}, this.parentElement)">✅ Hecho</button>
+        <button class="remove-btn" onclick="undoTask(${index}, this.parentElement)">✖ Deshacer</button>
+      `;
+
+      calendar.appendChild(div);
     });
+
+    function completeTask(index, element) {
+      localStorage.setItem(`task_${index}`, 'done');
+      element.classList.add('completed');
+    }
+
+    function undoTask(index, element) {
+      localStorage.removeItem(`task_${index}`);
+      element.classList.remove('completed');
+    }
   </script>
 </body>
 </html>
